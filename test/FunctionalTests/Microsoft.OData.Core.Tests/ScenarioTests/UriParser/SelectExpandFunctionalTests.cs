@@ -361,6 +361,24 @@ namespace Microsoft.OData.Core.Tests.ScenarioTests.UriParser
         }
 
         [Fact]
+        public void CanSelectSubPropertyOfComplexCollection()
+        {
+            const string select = "PreviousAddresses/City";
+            var result = RunParseSelectExpandAndAssertPaths(
+                select,
+                null,
+                select,
+                null,
+                HardCodedTestModel.GetPersonType(),
+                HardCodedTestModel.GetPeopleSet());
+
+            result.SelectedItems.Single().ShouldBePathSelectionItem(new ODataSelectPath(
+                    new PropertySegment(HardCodedTestModel.GetPersonPreviousAddressesProp()),
+                    new PropertySegment(HardCodedTestModel.GetAddressCityProperty())));
+            result.AllSelected.Should().BeFalse();
+        }
+
+        [Fact]
         public void SelectManyDeclaredPropertiesSucceeds()
         {
             const string select = " Shoe, Birthdate,GeographyPoint,    TimeEmployed, \tPreviousAddresses";
